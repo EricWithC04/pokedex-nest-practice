@@ -46,16 +46,25 @@ export class PokemonService {
   }
 
   async update(no: number, updatePokemonDto: UpdatePokemonDto) {
+    
     const pokemonToUpdate: Pokemon = await this.pokemonModel.findOne({ no: no })
 
     if (!pokemonToUpdate) throw new NotFoundException(`not found Pokemon with no ${no}`)
 
     if (updatePokemonDto.name) 
       updatePokemonDto.name = updatePokemonDto.name.toLowerCase()
-
-    await pokemonToUpdate.updateOne(updatePokemonDto, { new: true })
-    // return `This action updates a #${no} pokemon`;
-    return { ...pokemonToUpdate.toJSON(), ...updatePokemonDto }
+    
+    try {
+      await pokemonToUpdate.updateOne(updatePokemonDto, { new: true })
+      // return `This action updates a #${no} pokemon`;
+      return { ...pokemonToUpdate.toJSON(), ...updatePokemonDto }
+    } catch (err) {
+      if (err.code === 11000) {
+        throw new BadRequestException(`Pokemon with this data already exists in db, ${ JSON.stringify(err.keyValue) }`);
+      } else {
+        throw new InternalServerErrorException(`Can't update pokemon`)
+      }
+    }
   }
 
   remove(id: number) {
