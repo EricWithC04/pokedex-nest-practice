@@ -21,11 +21,7 @@ export class PokemonService {
       // return createPokemonDto;
       return newPokemon
     } catch (err) {
-      if (err.code === 11000) {
-        throw new BadRequestException(`Pokemon already exists in db, ${ JSON.stringify(err.keyValue) }`);
-      } else {
-        throw new InternalServerErrorException(`Can't create pokemon`)
-      }
+      this.handleExceptions(err, 'create')
     }
   }
 
@@ -59,15 +55,19 @@ export class PokemonService {
       // return `This action updates a #${no} pokemon`;
       return { ...pokemonToUpdate.toJSON(), ...updatePokemonDto }
     } catch (err) {
-      if (err.code === 11000) {
-        throw new BadRequestException(`Pokemon with this data already exists in db, ${ JSON.stringify(err.keyValue) }`);
-      } else {
-        throw new InternalServerErrorException(`Can't update pokemon`)
-      }
+      this.handleExceptions(err, 'update')
     }
   }
 
   remove(id: number) {
     return `This action removes a #${id} pokemon`;
+  }
+
+  private handleExceptions (err: any, method: string) {
+    if (err.code === 11000) {
+      throw new BadRequestException(`Pokemon with this data already exists in db, ${ JSON.stringify(err.keyValue) }`);
+    } else {
+      throw new InternalServerErrorException(`Can't ${ method } pokemon`)
+    }
   }
 }
