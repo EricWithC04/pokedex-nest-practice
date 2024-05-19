@@ -27,8 +27,8 @@ export class PokemonController {
     return this.pokemonService.update(+no, updatePokemonDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.pokemonService.remove(+id);
+  @Delete(':no')
+  remove(@Param('no') no: string) {
+    return this.pokemonService.remove(+no);
   }
 }
