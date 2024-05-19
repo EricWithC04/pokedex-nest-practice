@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { Model } from 'mongoose';
@@ -39,7 +39,9 @@ export class PokemonService {
     if (!isNaN(no)) {
       browsedPokemon = await this.pokemonModel.findOne({ no: no })
     }
-    
+
+    if (!browsedPokemon) throw new NotFoundException(`not found Pokemon with no ${no}`)
+
     return browsedPokemon
   }
 
