@@ -33,8 +33,14 @@ export class PokemonService {
     return `This action returns all pokemon`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} pokemon`;
+  async findOneByNo(no: number) {
+    let browsedPokemon: Pokemon;
+
+    if (!isNaN(no)) {
+      browsedPokemon = await this.pokemonModel.findOne({ no: no })
+    }
+    
+    return browsedPokemon
   }
 
   update(id: number, updatePokemonDto: UpdatePokemonDto) {
