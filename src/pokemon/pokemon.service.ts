@@ -45,8 +45,17 @@ export class PokemonService {
     return browsedPokemon
   }
 
-  update(id: number, updatePokemonDto: UpdatePokemonDto) {
-    return `This action updates a #${id} pokemon`;
+  async update(no: number, updatePokemonDto: UpdatePokemonDto) {
+    const pokemonToUpdate: Pokemon = await this.pokemonModel.findOne({ no: no })
+
+    if (!pokemonToUpdate) throw new NotFoundException(`not found Pokemon with no ${no}`)
+
+    if (updatePokemonDto.name) 
+      updatePokemonDto.name = updatePokemonDto.name.toLowerCase()
+
+    await pokemonToUpdate.updateOne(updatePokemonDto, { new: true })
+    // return `This action updates a #${no} pokemon`;
+    return { ...pokemonToUpdate.toJSON(), ...updatePokemonDto }
   }
 
   remove(id: number) {
